@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             GBGestioDades = new GroupBox();
             TBTotal = new TextBox();
             lblTotal = new Label();
@@ -50,16 +51,18 @@
             lblConsDomesticCapitaAlt = new Label();
             lblConsDomMitja = new Label();
             lblPoblacioGreatherThan = new Label();
-            label1 = new Label();
+            lblConDomCapitaBaix = new Label();
             lblConDomCapitaAlt = new Label();
             lblConsumDomMitja = new Label();
             lblPoblacio2000 = new Label();
             printDocument1 = new System.Drawing.Printing.PrintDocument();
             printDocument2 = new System.Drawing.Printing.PrintDocument();
             DG_CSV = new DataGridView();
+            errorProvider1 = new ErrorProvider(components);
             GBGestioDades.SuspendLayout();
             GBEstadistiques.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)DG_CSV).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)errorProvider1).BeginInit();
             SuspendLayout();
             // 
             // GBGestioDades
@@ -91,6 +94,7 @@
             TBTotal.Name = "TBTotal";
             TBTotal.Size = new Size(100, 23);
             TBTotal.TabIndex = 14;
+            TBTotal.Validating += TBTotal_Validating;
             // 
             // lblTotal
             // 
@@ -104,10 +108,12 @@
             // 
             // TBPoblacio
             // 
-            TBPoblacio.Location = new Point(193, 46);
+            TBPoblacio.Location = new Point(291, 46);
             TBPoblacio.Name = "TBPoblacio";
             TBPoblacio.Size = new Size(100, 23);
             TBPoblacio.TabIndex = 12;
+            TBPoblacio.TextChanged += TBPoblacio_TextChanged;
+            TBPoblacio.Validating += TBPoblacio_Validating;
             // 
             // TBConsumDom
             // 
@@ -115,6 +121,7 @@
             TBConsumDom.Name = "TBConsumDom";
             TBConsumDom.Size = new Size(100, 23);
             TBConsumDom.TabIndex = 11;
+            TBConsumDom.Validating += TBConsumDom_Validating;
             // 
             // TBActivitatsEcon
             // 
@@ -122,6 +129,7 @@
             TBActivitatsEcon.Name = "TBActivitatsEcon";
             TBActivitatsEcon.Size = new Size(100, 23);
             TBActivitatsEcon.TabIndex = 10;
+            TBActivitatsEcon.Validating += TBActivitatsEcon_Validating;
             // 
             // TBDomesticXarxa
             // 
@@ -129,6 +137,7 @@
             TBDomesticXarxa.Name = "TBDomesticXarxa";
             TBDomesticXarxa.Size = new Size(100, 23);
             TBDomesticXarxa.TabIndex = 9;
+            TBDomesticXarxa.Validating += TBDomesticXarxa_Validating;
             // 
             // lblConsumDomestic
             // 
@@ -163,10 +172,11 @@
             // CBComarca
             // 
             CBComarca.FormattingEnabled = true;
-            CBComarca.Location = new Point(96, 46);
+            CBComarca.Location = new Point(102, 46);
             CBComarca.Name = "CBComarca";
-            CBComarca.Size = new Size(77, 23);
+            CBComarca.Size = new Size(167, 23);
             CBComarca.TabIndex = 4;
+            CBComarca.Validating += CBComarca_Validating;
             // 
             // CBAny
             // 
@@ -177,12 +187,13 @@
             CBAny.Size = new Size(57, 23);
             CBAny.TabIndex = 3;
             CBAny.SelectedIndexChanged += CBAny_SelectedIndexChanged;
+            CBAny.Validating += CBAny_Validating;
             // 
             // lblPoblacio
             // 
             lblPoblacio.AutoSize = true;
             lblPoblacio.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            lblPoblacio.Location = new Point(193, 28);
+            lblPoblacio.Location = new Point(314, 28);
             lblPoblacio.Name = "lblPoblacio";
             lblPoblacio.Size = new Size(53, 15);
             lblPoblacio.TabIndex = 2;
@@ -192,7 +203,7 @@
             // 
             lblComarca.AutoSize = true;
             lblComarca.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            lblComarca.Location = new Point(96, 28);
+            lblComarca.Location = new Point(102, 28);
             lblComarca.Name = "lblComarca";
             lblComarca.Size = new Size(55, 15);
             lblComarca.TabIndex = 1;
@@ -216,6 +227,7 @@
             ButNetejar.TabIndex = 1;
             ButNetejar.Text = "Netejar";
             ButNetejar.UseVisualStyleBackColor = true;
+            ButNetejar.Click += ButNetejar_Click;
             // 
             // ButGuardar
             // 
@@ -225,6 +237,7 @@
             ButGuardar.TabIndex = 2;
             ButGuardar.Text = "Guardar";
             ButGuardar.UseVisualStyleBackColor = true;
+            ButGuardar.Click += ButGuardar_Click;
             // 
             // GBEstadistiques
             // 
@@ -232,13 +245,13 @@
             GBEstadistiques.Controls.Add(lblConsDomesticCapitaAlt);
             GBEstadistiques.Controls.Add(lblConsDomMitja);
             GBEstadistiques.Controls.Add(lblPoblacioGreatherThan);
-            GBEstadistiques.Controls.Add(label1);
+            GBEstadistiques.Controls.Add(lblConDomCapitaBaix);
             GBEstadistiques.Controls.Add(lblConDomCapitaAlt);
             GBEstadistiques.Controls.Add(lblConsumDomMitja);
             GBEstadistiques.Controls.Add(lblPoblacio2000);
             GBEstadistiques.Location = new Point(528, 12);
             GBEstadistiques.Name = "GBEstadistiques";
-            GBEstadistiques.Size = new Size(260, 179);
+            GBEstadistiques.Size = new Size(293, 179);
             GBEstadistiques.TabIndex = 3;
             GBEstadistiques.TabStop = false;
             GBEstadistiques.Text = "Estadístiques";
@@ -276,16 +289,16 @@
             lblPoblacioGreatherThan.Size = new Size(0, 15);
             lblPoblacioGreatherThan.TabIndex = 4;
             // 
-            // label1
+            // lblConDomCapitaBaix
             // 
-            label1.AutoSize = true;
-            label1.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            label1.Location = new Point(12, 138);
-            label1.Name = "label1";
-            label1.Size = new Size(218, 15);
-            label1.TabIndex = 3;
-            label1.Text = "Consum domèstic per càpita més baix:";
-            label1.Click += label1_Click_1;
+            lblConDomCapitaBaix.AutoSize = true;
+            lblConDomCapitaBaix.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            lblConDomCapitaBaix.Location = new Point(12, 138);
+            lblConDomCapitaBaix.Name = "lblConDomCapitaBaix";
+            lblConDomCapitaBaix.Size = new Size(218, 15);
+            lblConDomCapitaBaix.TabIndex = 3;
+            lblConDomCapitaBaix.Text = "Consum domèstic per càpita més baix:";
+            lblConDomCapitaBaix.Click += label1_Click_1;
             // 
             // lblConDomCapitaAlt
             // 
@@ -329,17 +342,21 @@
             // DG_CSV
             // 
             DG_CSV.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            DG_CSV.Location = new Point(12, 228);
+            DG_CSV.Location = new Point(39, 228);
             DG_CSV.Name = "DG_CSV";
-            DG_CSV.Size = new Size(776, 210);
+            DG_CSV.Size = new Size(761, 210);
             DG_CSV.TabIndex = 4;
             DG_CSV.CellContentClick += dataGridView1_CellContentClick;
+            // 
+            // errorProvider1
+            // 
+            errorProvider1.ContainerControl = this;
             // 
             // GestioDadesContainer
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(833, 450);
             Controls.Add(DG_CSV);
             Controls.Add(GBEstadistiques);
             Controls.Add(ButGuardar);
@@ -352,6 +369,7 @@
             GBEstadistiques.ResumeLayout(false);
             GBEstadistiques.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)DG_CSV).EndInit();
+            ((System.ComponentModel.ISupportInitialize)errorProvider1).EndInit();
             ResumeLayout(false);
         }
 
@@ -378,7 +396,7 @@
         private Label lblConDomCapitaAlt;
         private Label lblConsumDomMitja;
         private Label lblPoblacio2000;
-        private Label label1;
+        private Label lblConDomCapitaBaix;
         private Label lblPoblacioGreatherThan;
         private Label lblConsDomesticCapitaBaix;
         private Label lblConsDomesticCapitaAlt;
@@ -386,5 +404,6 @@
         private System.Drawing.Printing.PrintDocument printDocument1;
         private System.Drawing.Printing.PrintDocument printDocument2;
         private DataGridView DG_CSV;
+        private ErrorProvider errorProvider1;
     }
 }

@@ -1,88 +1,112 @@
-﻿using Microsoft.VisualBasic.FileIO;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using AC3_GUI_C_;
+﻿using AC3_Comarca;
+using CsvHelper;
+using CsvHelper.Configuration;
 using Microsoft.VisualBasic.FileIO;
 using System.Data;
-using System.Windows.Forms;
+using System.Diagnostics;
+using System.Globalization;
+using System.IO;
+using System.Xml;
 
 namespace AC3_GUI_C_
 {
     public static class Helper
     {
-        public static DataTable ReadCSV(string rutaArchivo)
-        {
-            DataTable dataTable = new DataTable();
 
-            // Llegeix la primera linea per obtenir el header
-            string[] header;
-            using (TextFieldParser parser = new TextFieldParser(rutaArchivo))
+        //LLEGIR EL CSV:
+        public static List<Comarca> ReadCSV(string filePathCSV)
+        {
+            List<Comarca> comarques = new List<Comarca>();
+            using (var reader = new StreamReader(filePathCSV))
+            using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
             {
-                parser.TextFieldType = FieldType.Delimited;
-                parser.SetDelimiters(",");
-                if (!parser.EndOfData)
+                csv.Read();
+                csv.ReadHeader();
+                while (csv.Read())
                 {
-                    header = parser.ReadFields();
+                    var comarca = new Comarca
+                    {
+                        Any = csv.GetField<int>("Any"),
+                        CodiComarca = csv.GetField<int>("Codi comarca"),
+                        NomComarca = csv.GetField<string>("Comarca"),
+                        Poblacio = csv.GetField<int>("Població"),
+                        DomesticXarxa = csv.GetField<int>("Domèstic xarxa"),
+                        ActivitatsEconomiques = csv.GetField<int>("Activitats econòmiques i fonts pròpies"),
+                        Total = csv.GetField<int>("Total"),
+                        ConsumDomesticPerCapita = csv.GetField<double>("Consum domèstic per càpita")
+                    };
+                    comarques.Add(comarca);
+                }
+            }
+            return comarques;
+        }
+
+
+        //CREAR L'XML DES DEL CSV:
+
+        public static void CreateXMLWithCSV(string filePathCSV, string filePathXML)
+        {
+            XmlDocument xmlDoc = new XmlDocument();
+            XmlDeclaration xmlDeclaration = xmlDoc.CreateXmlDeclaration("1.0", "UTF-8", null);
+            XmlElement root = xmlDoc.CreateElement("Comarques");
+            xmlDoc.InsertBefore(xmlDeclaration, xmlDoc.DocumentElement);
+            xmlDoc.AppendChild(root);
+
+            string[] lines = File.ReadAllLines(filePathCSV);
+
+            foreach (string line in lines)
+            {
+                string[] strings = line.Split(',');
+                
+                XmlElement comarca = xmlDoc.CreateElement("Comarca");
+                comarca.SetAttribute("Codigo", strings[1]);
+
+                if (strings[3].StartsWith("1") || strings[3].StartsWith("2") || strings[3].StartsWith("3") || strings[3].StartsWith("4") || strings[3].StartsWith("5") || strings[3].StartsWith("6") || strings[3].StartsWith("7") || strings[3].StartsWith("8") || strings[3].StartsWith("9")) 
+                {
+                    comarca.InnerText = strings[2];
                 }
                 else
                 {
-                    return null; // Si el fitxer està buit, retorna null
+                    comarca.InnerText = strings[2] + "," + strings[3];
                 }
+
+                root.AppendChild(comarca);
             }
-
-            // Afegir les columnes al DataTable
-            foreach (string encabezado in header)
-            {
-                dataTable.Columns.Add(encabezado);
-            }
-
-            // Llegir les dades del fitxer i afegir-les al DataTable
-            using (TextFieldParser parser = new TextFieldParser(rutaArchivo))
-            {
-                parser.TextFieldType = FieldType.Delimited;
-                parser.SetDelimiters(",");
-
-                // Ignorar el header
-                parser.ReadLine();
-
-                // Llegir les dades
-                while (!parser.EndOfData)
-                {
-                    string[] campos = parser.ReadFields();
-
-                    // Afegeix una fila al DataTable
-                    dataTable.Rows.Add(campos);
-                }
-            }
-            return dataTable;
+            xmlDoc.Save(filePathXML);
         }
 
-
-        //El selector ComboBox “CBComarca” ha d’obtenir els valors a partir d’un document XML que s’ha de crear (clau: Codi Comarca, valor: Comarca) i amb les claus-valors del fitxer CSV
-
-        public static Dictionary<string, string> GetComarques(string rutaArchivo)
+        //CARREGAR EL COMBOBOX DE COMARQUES:
+        public static void loadXMLinComboBox(string filePathXML, ComboBox comboBox)
         {
-            Dictionary<string, string> comarques = new Dictionary<string, string>();
+            comboBox.Items.Clear();
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.Load(filePathXML);
 
-            using (TextFieldParser parser = new TextFieldParser(rutaArchivo))
+            foreach (XmlNode node in xmlDoc.DocumentElement.ChildNodes)
             {
-                parser.TextFieldType = FieldType.Delimited;
-                parser.SetDelimiters(",");
-                parser.ReadLine(); // Ignorar el header
 
-                while (!parser.EndOfData)
-                {
-                    string[] campos = parser.ReadFields();
-                    comarques.Add(campos[0], campos[1]);
-                }
+                string name = node.InnerText;
+                comboBox.Items.Add(name);
             }
-
-            return comarques;
+            if (comboBox.Items.Count > 0)
+                comboBox.SelectedIndex = 0;
         }
+
+        //AFEGIR DADES AL CSV:
+        public static void AppendCSV(List<Comarca> comarques)
+        {
+            var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+            {
+                HasHeaderRecord = false,
+            };
+            string filePath = @"..\..\..\Consum_d_aigua_a_Catalunya_per_comarques_20240402.csv";
+            using var stream = File.Open(filePath, FileMode.Append);
+            using var writer = new StreamWriter(stream);
+            using var csvWriter = new CsvWriter(writer, config);
+            csvWriter.WriteRecords(comarques);
+        }
+
+
 
 
 
