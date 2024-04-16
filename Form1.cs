@@ -1,3 +1,5 @@
+
+
 namespace AC3_GUI_C_
 {
     public partial class GestioDadesContainer : Form
@@ -5,6 +7,15 @@ namespace AC3_GUI_C_
         public GestioDadesContainer()
         {
             InitializeComponent();
+            CargarDatosCSV();
+
+        }
+
+        private void CargarDatosCSV()
+        {
+            string rutaArchivo = @"..\..\..\Consum_d_aigua_a_Catalunya_per_comarques_20240402.csv";
+
+            DG_CSV.DataSource = Helper.ReadCSV(rutaArchivo);
         }
 
         private void label1_Click(object sender, EventArgs e)
@@ -38,6 +49,11 @@ namespace AC3_GUI_C_
         }
 
         private void GBEstadistiques_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
 
         }

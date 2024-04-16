@@ -56,8 +56,10 @@
             lblPoblacio2000 = new Label();
             printDocument1 = new System.Drawing.Printing.PrintDocument();
             printDocument2 = new System.Drawing.Printing.PrintDocument();
+            DG_CSV = new DataGridView();
             GBGestioDades.SuspendLayout();
             GBEstadistiques.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)DG_CSV).BeginInit();
             SuspendLayout();
             // 
             // GBGestioDades
@@ -324,11 +326,21 @@
             // 
             printDocument2.DocumentName = "C:\\Users\\argo\\Documents\\TOT\\AccesDades\\EA's\\AC3_GUI_C#\\Consum_d_aigua_a_Catalunya_per_comarques_20240402.csv";
             // 
+            // DG_CSV
+            // 
+            DG_CSV.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            DG_CSV.Location = new Point(12, 228);
+            DG_CSV.Name = "DG_CSV";
+            DG_CSV.Size = new Size(776, 210);
+            DG_CSV.TabIndex = 4;
+            DG_CSV.CellContentClick += dataGridView1_CellContentClick;
+            // 
             // GestioDadesContainer
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(DG_CSV);
             Controls.Add(GBEstadistiques);
             Controls.Add(ButGuardar);
             Controls.Add(ButNetejar);
@@ -339,6 +351,7 @@
             GBGestioDades.PerformLayout();
             GBEstadistiques.ResumeLayout(false);
             GBEstadistiques.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)DG_CSV).EndInit();
             ResumeLayout(false);
         }
 
@@ -372,5 +385,6 @@
         private Label lblConsDomMitja;
         private System.Drawing.Printing.PrintDocument printDocument1;
         private System.Drawing.Printing.PrintDocument printDocument2;
+        private DataGridView DG_CSV;
     }
 }
