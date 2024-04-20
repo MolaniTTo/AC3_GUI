@@ -7,6 +7,7 @@ namespace AC3_GUI_C_
 {
     public partial class GestioDadesContainer : Form
     {
+        private bool saveClick = false;
         public string filePathCSV = @"..\..\..\Consum_d_aigua_a_Catalunya_per_comarques_20240402.csv";
         public string filePathXML = @"..\..\..\Consum_d_aigua_a_Catalunya_per_comarques_20240402.xml";
 
@@ -128,7 +129,7 @@ namespace AC3_GUI_C_
 
         private void ButGuardar_Click(object sender, EventArgs e)
         {
-           
+            saveClick = true;
 
             if (this.ValidateChildren())
             {
@@ -158,6 +159,8 @@ namespace AC3_GUI_C_
 
         private void TBPoblacio_Validating(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            if(!saveClick) return;
+            
             TextBox textBox = TBPoblacio;
 
             errorProvider1.SetError(textBox, "");
